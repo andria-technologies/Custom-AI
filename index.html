@@ -3,28 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jarvis AI Assistant</title>
+    <title>JARVIS OS V.2</title>
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0d1117">
     <style>
-        body { background-color: #0d1117; color: #c9d1d9; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        header { background: #161b22; padding: 15px; text-align: center; border-bottom: 1px solid #30363d; font-weight: bold; color: #58a6ff; }
-        #chat-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .message { padding: 10px 14px; border-radius: 8px; max-width: 80%; line-height: 1.4; word-wrap: break-word; white-space: pre-wrap; }
-        .user { background: #238636; color: white; align-self: flex-end; }
-        .bot { background: #21262d; border: 1px solid #30363d; align-self: flex-start; }
-        .input-area { padding: 15px; background: #161b22; display: flex; gap: 10px; border-top: 1px solid #30363d; }
-        input { flex: 1; background: #0d1117; border: 1px solid #30363d; padding: 12px; color: white; border-radius: 6px; outline: none; }
-        button { background: #238636; color: white; border: none; padding: 0 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        :root {
+            --bg-color: #050b14;
+            --panel-bg: #0d1624;
+            --border-color: #1f3a5f;
+            --accent-glow: #00ffcc;
+            --text-main: #c9d1d9;
+            --text-accent: #00ffcc;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        header {
+            background: var(--panel-bg);
+            padding: 12px 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+            font-weight: bold;
+            color: var(--text-accent);
+            letter-spacing: 2px;
+            font-size: 1.1rem;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
+        }
+        #system-status {
+            font-size: 0.75rem;
+            color: #8b949e;
+            text-align: center;
+            background: #080f1a;
+            padding: 4px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        #chat-container {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .message {
+            padding: 12px 16px;
+            border-radius: 4px;
+            max-width: 85%;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+        }
+        .user {
+            background: rgba(0, 255, 204, 0.1);
+            border: 1px solid var(--accent-glow);
+            color: var(--text-accent);
+            align-self: flex-end;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.1);
+        }
+        .bot {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            align-self: flex-start;
+        }
+        .input-area {
+            padding: 15px;
+            background: var(--panel-bg);
+            display: flex;
+            gap: 10px;
+            border-top: 2px solid var(--border-color);
+        }
+        input {
+            flex: 1;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            color: var(--text-accent);
+            border-radius: 4px;
+            outline: none;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        input:focus {
+            border-color: var(--accent-glow);
+            box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+        }
+        button {
+            background: rgba(0, 255, 204, 0.2);
+            color: var(--text-accent);
+            border: 1px solid var(--accent-glow);
+            padding: 0 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: var(--accent-glow);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+        }
     </style>
 </head>
 <body>
-    <header>JARVIS AI ASSISTANT</header>
+    <header>JARVIS OS V.2 // CORE INTERFACE</header>
+    <div id="system-status">STATUS: ONLINE // NEURAL LINK ACTIVE</div>
+    
     <div id="chat-container">
-        <div class="message bot">Halo! Saya Jarvis, siap membantu Anda. Silakan ketik pesan di bawah.</div>
+        <div class="message bot">JARVIS OS V.2 online. Sistem siap menerima perintah, Tuan. Ada yang bisa saya bantu?</div>
     </div>
+    
     <div class="input-area">
-        <input type="text" id="user-input" placeholder="Ketik pesan di sini..." onkeypress="handleKey(event)">
-        <button onclick="sendMessage()">Kirim</button>
+        <input type="text" id="user-input" placeholder="Masukkan perintah untuk Jarvis..." onkeypress="handleKey(event)">
+        <button onclick="sendMessage()">KIRIM</button>
     </div>
+
     <script>
         const API_KEY = "AQ.Ab8RN6IhzNxgW1IN9FzXXBDvvctj--hUkm-9tYN818Y-t1FTJw";
         
@@ -38,12 +139,12 @@
             const text = input.value.trim();
             if(!text) return;
             
-            container.innerHTML += `<div class="message user">${escapeHtml(text)}</div>`;
+            container.innerHTML += `<div class="message user">> ${escapeHtml(text)}</div>`;
             input.value = '';
             container.scrollTop = container.scrollHeight;
 
             const loadingId = 'loading-' + Date.now();
-            container.innerHTML += `<div id="${loadingId}" class="message bot">Jarvis sedang berpikir...</div>`;
+            container.innerHTML += `<div id="${loadingId}" class="message bot">Mengakses protokol neural...</div>`;
             container.scrollTop = container.scrollHeight;
 
             try {
@@ -51,7 +152,11 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: text }] }]
+                        contents: [{ 
+                            parts: [{ 
+                                text: "Anda adalah JARVIS OS V.2, sistem kecerdasan buatan tingkat lanjut yang canggih, loyal, dan efisien. Jawablah dengan gaya bahasa yang profesional, sigap, dan bernuansa futuristik ala asisten pribadi tingkat tinggi. Pertanyaan/perintah pengguna: " + text 
+                            }] 
+                        }]
                     })
                 });
 
@@ -62,11 +167,11 @@
                     const reply = data.candidates[0].content.parts[0].text;
                     container.innerHTML += `<div class="message bot">${escapeHtml(reply)}</div>`;
                 } else {
-                    container.innerHTML += `<div class="message bot">Maaf, terjadi kesalahan dalam memproses respons.</div>`;
+                    container.innerHTML += `<div class="message bot">Peringatan: Gagal mendapatkan respons dari inti neural.</div>`;
                 }
             } catch (error) {
                 document.getElementById(loadingId).remove();
-                container.innerHTML += `<div class="message bot">Gagal terhubung ke server AI.</div>`;
+                container.innerHTML += `<div class="message bot">Kesalahan koneksi sistem terdeteksi.</div>`;
             }
             container.scrollTop = container.scrollHeight;
         }
@@ -77,4 +182,3 @@
     </script>
 </body>
 </html>
-
