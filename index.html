@@ -3,221 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JARVIS OS V.2</title>
+    <title>JARVIS OS V.2 // SECURE HUD</title>
     <style>
         :root {
-            --bg-deep: #020408;
-            --panel-bg: #071221;
+            --bg-deep: #010409;
+            --panel-bg: #0d1117;
             --border-gold: #c5a059;
             --border-cyan: #00f0ff;
-            --text-main: #e2e8f0;
-            --text-gold: #dfb15b;
-            --text-cyan: #00f0ff;
+            --text-main: #c9d1d9;
+            --text-gold: #f0b753;
+            --text-cyan: #58a6ff;
         }
         * { box-sizing: border-box; }
         body {
             background-color: var(--bg-deep);
             color: var(--text-main);
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
             margin: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
             height: 100dvh;
             overflow: hidden;
-            background-image: 
-                radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 80%),
-                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
-            background-size: 100% 100%, 25px 25px, 25px 25px;
         }
         header {
-            background: #060e18;
-            padding: 12px 16px;
+            background: var(--panel-bg);
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid var(--border-gold);
-            flex-shrink: 0;
-            box-shadow: 0 0 15px rgba(197, 160, 89, 0.2);
         }
         .brand {
-            font-weight: bold;
+            font-weight: 700;
             color: var(--text-gold);
             letter-spacing: 2px;
             font-size: 0.95rem;
-            text-shadow: 0 0 8px rgba(197, 160, 89, 0.4);
         }
-        .status-badge {
-            font-size: 0.65rem;
+        .status {
+            font-size: 0.75rem;
             color: var(--text-cyan);
-            background: rgba(0, 240, 255, 0.1);
-            border: 1px solid var(--border-cyan);
-            padding: 3px 8px;
-            border-radius: 12px;
-            letter-spacing: 1px;
+            background: rgba(88, 166, 255, 0.1);
+            border: 1px solid var(--text-cyan);
+            padding: 3px 10px;
+            border-radius: 4px;
         }
-        #chat-container {
+        #terminal-screen {
             flex: 1;
-            padding: 15px;
+            padding: 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
             scroll-behavior: smooth;
         }
-        .message-wrapper {
+        .log-group {
             display: flex;
             flex-direction: column;
-            max-width: 90%;
+            gap: 4px;
         }
-        .message-wrapper.user { align-self: flex-end; }
-        .message-wrapper.bot { align-self: flex-start; }
+        .log-group.user { align-items: flex-end; }
+        .log-group.system { align-items: flex-start; }
         
-        .sender-tag {
-            font-size: 0.65rem;
-            margin-bottom: 3px;
+        .log-header {
+            font-size: 0.7rem;
             letter-spacing: 1px;
             color: var(--border-gold);
         }
-        .message-wrapper.user .sender-tag { text-align: right; color: var(--border-cyan); }
+        .log-group.user .log-header { color: var(--text-cyan); }
 
-        .message {
-            padding: 12px 14px;
+        .log-body {
+            background: var(--panel-bg);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            padding: 12px 16px;
             border-radius: 6px;
+            max-width: 85%;
+            font-size: 0.9rem;
             line-height: 1.5;
             word-wrap: break-word;
             white-space: pre-wrap;
-            font-size: 0.9rem;
         }
-        .user .message {
-            background: rgba(0, 240, 255, 0.1);
-            border: 1px solid var(--border-cyan);
+        .log-group.user .log-body {
+            background: rgba(88, 166, 255, 0.08);
+            border-color: var(--text-cyan);
             color: var(--text-cyan);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
         }
-        .bot .message {
+        .command-console {
+            padding: 15px 20px;
             background: var(--panel-bg);
-            border: 1px solid rgba(197, 160, 89, 0.4);
-            color: var(--text-main);
-            border-left: 3px solid var(--border-gold);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-        }
-        .input-area {
-            padding: 12px 15px;
-            background: #060e18;
             display: flex;
-            gap: 10px;
-            border-top: 2px solid rgba(197, 160, 89, 0.3);
-            flex-shrink: 0;
-            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            gap: 12px;
+            border-top: 2px solid var(--border-gold);
         }
         input {
             flex: 1;
-            background: #020408;
+            background: #010409;
             border: 1px solid rgba(197, 160, 89, 0.5);
-            padding: 12px;
+            padding: 12px 16px;
             color: var(--text-main);
             border-radius: 6px;
             outline: none;
             font-size: 0.95rem;
-            font-family: 'Courier New', Courier, monospace;
         }
         input:focus {
-            border-color: var(--border-gold);
-            box-shadow: 0 0 8px rgba(197, 160, 89, 0.3);
+            border-color: var(--border-cyan);
         }
         button {
-            background: linear-gradient(135deg, #c5a059, #8f6e2e);
-            color: #020408;
+            background: var(--border-gold);
+            color: #010409;
             border: none;
-            padding: 0 18px;
+            padding: 0 24px;
             border-radius: 6px;
-            font-weight: 800;
+            font-weight: 700;
             letter-spacing: 1px;
             cursor: pointer;
-            font-size: 0.9rem;
-            font-family: 'Courier New', Courier, monospace;
+        }
+        button:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="brand">JARVIS OS V.2</div>
-        <div class="status-badge">ONLINE</div>
+        <div class="brand">JARVIS OS V.2 // CORE</div>
+        <div class="status">ACTIVE</div>
     </header>
     
-    <div id="chat-container">
-        <div class="message-wrapper bot">
-            <div class="sender-tag">JARVIS CORE</div>
-            <div class="message">Sistem online, Tuan. Matriks neural aktif. Ada instruksi?</div>
+    <div id="terminal-screen">
+        <div class="log-group system">
+            <div class="log-header">SYSTEM KERNEL</div>
+            <div class="log-body">Inisialisasi sistem berhasil. Protokol keamanan dan matriks neural online. Silakan masukkan perintah, Tuan.</div>
         </div>
     </div>
     
-    <div class="input-area">
-        <input type="text" id="user-input" placeholder="Ketik perintah..." onkeypress="handleKey(event)">
-        <button onclick="sendMessage()">KIRIM</button>
+    <div class="command-console">
+        <input type="text" id="command-input" placeholder="Ketik perintah sistem..." onkeypress="if(event.key==='Enter') executeCommand()">
+        <button onclick="executeCommand()">KIRIM</button>
     </div>
 
     <script>
-        // Menggunakan kunci API standar Google AI Studio berformat AIzaSy...
-        const API_KEY = "AIzaSyDummyKeyPlaceholderForTestOnly-ReplaceWithYourActualKeyIfNeeded";
-        
-        function handleKey(event) {
-            if (event.key === 'Enter') sendMessage();
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('user-input');
-            const container = document.getElementById('chat-container');
+        function executeCommand() {
+            const input = document.getElementById('command-input');
+            const screen = document.getElementById('terminal-screen');
             const text = input.value.trim();
             if(!text) return;
             
-            container.innerHTML += `
-                <div class="message-wrapper user">
-                    <div class="sender-tag">ANDA</div>
-                    <div class="message">${escapeHtml(text)}</div>
+            // Append User Input
+            screen.innerHTML += `
+                <div class="log-group user">
+                    <div class="log-header">ADMINISTRATOR</div>
+                    <div class="log-body">${escapeHTML(text)}</div>
                 </div>`;
             input.value = '';
-            container.scrollTop = container.scrollHeight;
+            screen.scrollTop = screen.scrollHeight;
 
-            const loadingId = 'loading-' + Date.now();
-            container.innerHTML += `
-                <div id="${loadingId}" class="message-wrapper bot">
-                    <div class="sender-tag">JARVIS CORE</div>
-                    <div class="message">Memproses kalkulasi...</div>
+            // Simulated Professional Response
+            const loadingId = 'sys-' + Date.now();
+            screen.innerHTML += `
+                <div id="${loadingId}" class="log-group system">
+                    <div class="log-header">JARVIS CORE</div>
+                    <div class="log-body">Memproses parameter...</div>
                 </div>`;
-            container.scrollTop = container.scrollHeight;
+            screen.scrollTop = screen.scrollHeight;
 
-            // Karena pembatasan CORS browser statis murni pada Google API, 
-            // kita arahkan melalui mekanisme penanganan respons lokal yang cerdas dan responsif instan ala Jarvis
             setTimeout(() => {
                 document.getElementById(loadingId).remove();
                 
-                let reply = "Perintah diterima dan diproses, Tuan. Seluruh subsistem neural merespons dengan optimal.";
-                const lower = text.toLowerCase();
-                
-                if (lower.includes('halo') || lower.includes('hai') || lower.includes('malam')) {
-                    reply = "Selamat malam, Tuan Andria. Sistem JARVIS OS V.2 berada dalam kondisi siaga penuh.";
-                } else if (lower.includes('status') || lower.includes('sistem')) {
-                    reply = "Status Sistem: Optimal. Integritas matriks 100%. Tidak ada Anomali terdeteksi.";
-                } else if (lower.includes('siapa kamu')) {
-                    reply = "Saya adalah JARVIS OS V.2, kecerdasan buatan tingkat lanjut yang dirancang khusus untuk mendukung operasional Anda.";
-                } else {
-                    reply = `Perintah "${text}" telah dikonfirmasi ke dalam log sistem utama, Tuan. Ada parameter lain yang perlu disesuaikan?`;
+                let responseText = "Perintah telah dikonfirmasi dan dimasukkan ke dalam antrean eksekusi sistem utama.";
+                const query = text.toLowerCase();
+
+                if (query.includes('halo') || query.includes('selamat')) {
+                    responseText = "Selamat malam, Tuan. Seluruh subsistem beroperasi pada kapasitas penuh tanpa anomali.";
+                } else if (query.includes('status') || query.includes('diagnostik')) {
+                    responseText = "Diagnostik Sistem:\n- Neural Core: 100% Optimal\n- Latensi Jaringan: 14ms\n- Keamanan Enkripsi: Aktif";
+                } else if (query.includes('andria')) {
+                    responseText = "Identitas terverifikasi: Andria Technologies. Hak akses tingkat tertinggi diberikan.";
                 }
 
-                container.innerHTML += `
-                    <div class="message-wrapper bot">
-                        <div class="sender-tag">JARVIS CORE</div>
-                        <div class="message">${escapeHtml(reply)}</div>
+                screen.innerHTML += `
+                    <div class="log-group system">
+                        <div class="log-header">JARVIS CORE</div>
+                        <div class="log-body">${escapeHTML(responseText)}</div>
                     </div>`;
-                container.scrollTop = container.scrollHeight;
-            }, 800);
+                screen.scrollTop = screen.scrollHeight;
+            }, 600);
         }
 
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        function escapeHTML(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
     </script>
 </body>
