@@ -3,126 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS OS V.2</title>
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#0d1117">
+    <title>JARVIS OS V.2 - Advanced AI Interface</title>
+    <meta name="theme-color" content="#020408">
     <style>
         :root {
-            --bg-color: #050b14;
-            --panel-bg: #0d1624;
-            --border-color: #1f3a5f;
-            --accent-glow: #00ffcc;
-            --text-main: #c9d1d9;
-            --text-accent: #00ffcc;
+            --bg-deep: #020408;
+            --panel-bg: rgba(7, 18, 33, 0.85);
+            --border-gold: #c5a059;
+            --border-cyan: #00f0ff;
+            --text-main: #e2e8f0;
+            --text-gold: #dfb15b;
+            --text-cyan: #00f0ff;
         }
+        * { box-sizing: border-box; }
         body {
-            background-color: var(--bg-color);
+            background-color: var(--bg-deep);
             color: var(--text-main);
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
             overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.03) 0%, transparent 70%),
+                linear-gradient(rgba(197, 160, 89, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(197, 160, 89, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 20px 20px, 20px 20px;
         }
         header {
-            background: var(--panel-bg);
-            padding: 12px 20px;
-            text-align: center;
-            border-bottom: 2px solid var(--border-color);
-            font-weight: bold;
-            color: var(--text-accent);
-            letter-spacing: 2px;
-            font-size: 1.1rem;
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
+            background: linear-gradient(180deg, #0d1b2a 0%, #060e18 100%);
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-gold);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
         }
-        #system-status {
+        .brand {
+            font-weight: 900;
+            color: var(--text-gold);
+            letter-spacing: 3px;
+            font-size: 1.1rem;
+            text-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
+        }
+        .status-badge {
             font-size: 0.75rem;
-            color: #8b949e;
-            text-align: center;
-            background: #080f1a;
-            padding: 4px;
-            border-bottom: 1px solid var(--border-color);
+            color: var(--text-cyan);
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--border-cyan);
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
         }
         #chat-container {
             flex: 1;
-            padding: 15px;
+            padding: 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
+            scroll-behavior: smooth;
         }
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
+            max-width: 88%;
+        }
+        .message-wrapper.user { align-self: flex-end; }
+        .message-wrapper.bot { align-self: flex-start; }
+        
+        .sender-tag {
+            font-size: 0.7rem;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+            color: var(--border-gold);
+        }
+        .message-wrapper.user .sender-tag { text-align: right; color: var(--text-cyan); }
+
         .message {
-            padding: 12px 16px;
-            border-radius: 4px;
-            max-width: 85%;
-            line-height: 1.5;
+            padding: 14px 18px;
+            border-radius: 8px;
+            line-height: 1.6;
             word-wrap: break-word;
             white-space: pre-wrap;
             font-size: 0.95rem;
         }
-        .user {
-            background: rgba(0, 255, 204, 0.1);
-            border: 1px solid var(--accent-glow);
-            color: var(--text-accent);
-            align-self: flex-end;
-            box-shadow: 0 0 10px rgba(0, 255, 204, 0.1);
+        .user .message {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(0, 240, 255, 0.05));
+            border: 1px solid var(--border-cyan);
+            color: var(--text-cyan);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
         }
-        .bot {
+        .bot .message {
             background: var(--panel-bg);
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(197, 160, 89, 0.4);
             color: var(--text-main);
-            align-self: flex-start;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            border-left: 3px solid var(--border-gold);
         }
         .input-area {
-            padding: 15px;
-            background: var(--panel-bg);
+            padding: 15px 20px;
+            background: #060e18;
             display: flex;
-            gap: 10px;
-            border-top: 2px solid var(--border-color);
+            gap: 12px;
+            border-top: 2px solid rgba(197, 160, 89, 0.3);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.8);
         }
         input {
             flex: 1;
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            color: var(--text-accent);
-            border-radius: 4px;
+            background: #020408;
+            border: 1px solid rgba(197, 160, 89, 0.5);
+            padding: 14px 16px;
+            color: var(--text-main);
+            border-radius: 6px;
             outline: none;
-            font-family: 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            transition: all 0.3s;
         }
         input:focus {
-            border-color: var(--accent-glow);
-            box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+            border-color: var(--border-gold);
+            box-shadow: 0 0 12px rgba(197, 160, 89, 0.3);
         }
         button {
-            background: rgba(0, 255, 204, 0.2);
-            color: var(--text-accent);
-            border: 1px solid var(--accent-glow);
-            padding: 0 20px;
-            border-radius: 4px;
-            font-weight: bold;
+            background: linear-gradient(135deg, #c5a059, #8f6e2e);
+            color: #020408;
+            border: none;
+            padding: 0 24px;
+            border-radius: 6px;
+            font-weight: 800;
+            letter-spacing: 1px;
             cursor: pointer;
-            font-family: 'Courier New', Courier, monospace;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
         }
         button:hover {
-            background: var(--accent-glow);
-            color: var(--bg-color);
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+            background: linear-gradient(135deg, #dfb15b, #c5a059);
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.7);
+        }
+        .loading-dots span {
+            animation: blink 1.4s infinite both;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .loading-dots span:nth-child(2) { animation-delay: .2s; }
+        .loading-dots span:nth-child(3) { animation-delay: .4s; }
+        @keyframes blink {
+            0% { opacity: .2; }
+            20% { opacity: 1; }
+            100% { opacity: .2; }
         }
     </style>
 </head>
 <body>
-    <header>JARVIS OS V.2 // CORE INTERFACE</header>
-    <div id="system-status">STATUS: ONLINE // NEURAL LINK ACTIVE</div>
+    <header>
+        <div class="brand">JARVIS OS V.2</div>
+        <div class="status-badge">ONLINE // SECURE</div>
+    </header>
     
     <div id="chat-container">
-        <div class="message bot">JARVIS OS V.2 online. Sistem siap menerima perintah, Tuan. Ada yang bisa saya bantu?</div>
+        <div class="message-wrapper bot">
+            <div class="sender-tag">JARVIS CORE</div>
+            <div class="message">Sistem online, Tuan. Seluruh protokol neural dan matriks kecerdasan aktif sepenuhnya. Ada instruksi khusus untuk hari ini?</div>
+        </div>
     </div>
     
     <div class="input-area">
-        <input type="text" id="user-input" placeholder="Masukkan perintah untuk Jarvis..." onkeypress="handleKey(event)">
+        <input type="text" id="user-input" placeholder="Masukkan perintah untuk Jarvis..." onkeypress="handleKey(event)" autofocus>
         <button onclick="sendMessage()">KIRIM</button>
     </div>
 
@@ -139,12 +187,22 @@
             const text = input.value.trim();
             if(!text) return;
             
-            container.innerHTML += `<div class="message user">> ${escapeHtml(text)}</div>`;
+            // Tampilkan pesan user
+            container.innerHTML += `
+                <div class="message-wrapper user">
+                    <div class="sender-tag">ANDA</div>
+                    <div class="message">${escapeHtml(text)}</div>
+                </div>`;
             input.value = '';
             container.scrollTop = container.scrollHeight;
 
+            // Indikator loading ala Jarvis
             const loadingId = 'loading-' + Date.now();
-            container.innerHTML += `<div id="${loadingId}" class="message bot">Mengakses protokol neural...</div>`;
+            container.innerHTML += `
+                <div id="${loadingId}" class="message-wrapper bot">
+                    <div class="sender-tag">JARVIS CORE</div>
+                    <div class="message">Memproses matriks data<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></div>
+                </div>`;
             container.scrollTop = container.scrollHeight;
 
             try {
@@ -154,7 +212,7 @@
                     body: JSON.stringify({
                         contents: [{ 
                             parts: [{ 
-                                text: "Anda adalah JARVIS OS V.2, sistem kecerdasan buatan tingkat lanjut yang canggih, loyal, dan efisien. Jawablah dengan gaya bahasa yang profesional, sigap, dan bernuansa futuristik ala asisten pribadi tingkat tinggi. Pertanyaan/perintah pengguna: " + text 
+                                text: "Bertindaklah sebagai JARVIS OS V.2, sistem kecerdasan buatan tingkat lanjut yang sangat cerdas, setia, profesional, dan futuristik. Berikan respons yang taktis, lugas, dan berwibawa sesuai identitas asisten tingkat tinggi. Perintah: " + text 
                             }] 
                         }]
                     })
@@ -165,13 +223,25 @@
 
                 if (data.candidates && data.candidates[0].content.parts[0].text) {
                     const reply = data.candidates[0].content.parts[0].text;
-                    container.innerHTML += `<div class="message bot">${escapeHtml(reply)}</div>`;
+                    container.innerHTML += `
+                        <div class="message-wrapper bot">
+                            <div class="sender-tag">JARVIS CORE</div>
+                            <div class="message">${escapeHtml(reply)}</div>
+                        </div>`;
                 } else {
-                    container.innerHTML += `<div class="message bot">Peringatan: Gagal mendapatkan respons dari inti neural.</div>`;
+                    container.innerHTML += `
+                        <div class="message-wrapper bot">
+                            <div class="sender-tag">JARVIS CORE</div>
+                            <div class="message">Peringatan: Respons neural terganggu.</div>
+                        </div>`;
                 }
             } catch (error) {
                 document.getElementById(loadingId).remove();
-                container.innerHTML += `<div class="message bot">Kesalahan koneksi sistem terdeteksi.</div>`;
+                container.innerHTML += `
+                    <div class="message-wrapper bot">
+                        <div class="sender-tag">JARVIS CORE</div>
+                        <div class="message">Kesalahan koneksi jaringan terdeteksi.</div>
+                    </div>`;
             }
             container.scrollTop = container.scrollHeight;
         }
