@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JARVIS OS V.2 // NEURAL CORE</title>
+    <title>JARVIS OS V.2 // LIVE NEURAL CORE</title>
     <style>
         :root {
             --bg-color: #000104;
@@ -51,7 +51,7 @@
             pointer-events: auto;
         }
         .hud-badge {
-            background: rgba(7, 18, 33, 0.75);
+            background: rgba(7, 18, 33, 0.85);
             border: 1px solid var(--glow-cyan);
             padding: 8px 14px;
             border-radius: 4px;
@@ -64,12 +64,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
             pointer-events: auto;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         #response-box {
-            background: rgba(7, 18, 33, 0.85);
+            background: rgba(7, 18, 33, 0.9);
             border: 1px solid var(--glow-gold);
             color: #fff;
             padding: 12px 18px;
@@ -77,18 +77,19 @@
             max-width: 90%;
             text-align: center;
             font-size: 0.85rem;
-            box-shadow: 0 0 15px rgba(197, 160, 89, 0.2);
-            display: none;
+            box-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
+            display: block;
         }
-        .action-bar {
+        .action-container {
             display: flex;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
         }
         input {
             flex: 1;
-            background: rgba(2, 6, 17, 0.9);
+            background: rgba(2, 6, 17, 0.95);
             border: 1px solid var(--glow-cyan);
             padding: 12px;
             color: var(--glow-cyan);
@@ -100,11 +101,39 @@
         input:focus {
             border-color: var(--glow-gold);
         }
-        button {
+        #mic-btn {
+            background: rgba(0, 240, 255, 0.15);
+            border: 2px solid var(--glow-cyan);
+            color: var(--glow-cyan);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        #mic-btn.active {
+            background: #ff0055;
+            border-color: #ff0055;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.8);
+            animation: pulse-mic 1s infinite;
+        }
+        @keyframes pulse-mic {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .send-btn {
             background: linear-gradient(135deg, #00f0ff, #0077ff);
             color: #000;
             border: none;
-            padding: 0 20px;
+            padding: 12px 18px;
             border-radius: 6px;
             font-weight: bold;
             letter-spacing: 1px;
@@ -124,20 +153,20 @@
         </header>
 
         <div class="control-panel">
-            <div id="response-box">Sistem siap, Tuan.</div>
-            <div class="action-bar">
-                <input type="text" id="user-command" placeholder="Ketik perintah atau tanyakan sesuatu..." onkeypress="if(event.key==='Enter') sendCommand()">
-                <button onclick="sendCommand()">KIRIM</button>
+            <div id="response-box">Sistem online, Tuan Andria. Silakan gunakan tombol mic atau ketik perintah.</div>
+            <div class="action-container">
+                <button id="mic-btn" onclick="toggleMic()" title="Gunakan Suara">🎙</button>
+                <input type="text" id="user-command" placeholder="Ketik perintah atau bicara..." onkeypress="if(event.key==='Enter') sendCommand()">
+                <button class="send-btn" onclick="sendCommand()">KIRIM</button>
             </div>
         </div>
     </div>
 
-    <!-- Three.js untuk Render Orb & Cincin 3D yang Mulus -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         const API_KEY = "AQ.Ab8RN6IhzNxgW1IN9FzXXBDvvctj--hUkm-9tYN818Y-t1FTJw";
         
-        // Setup Scene Three.js
+        // --- 3D ORB RENDERER (Three.js) ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -148,23 +177,20 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
 
-        // --- Smooth Glowing Orb (High-Res Sphere) ---
         const sphereGeo = new THREE.SphereGeometry(1, 64, 64);
         const sphereMat = new THREE.MeshPhysicalMaterial({
             color: 0x00f0ff,
-            emissive: 0x0055ff,
-            emissiveIntensity: 0.6,
+            emissive: 0x0044aa,
+            emissiveIntensity: 0.5,
             roughness: 0.1,
             metalness: 0.2,
-            transmission: 0.6,
+            transmission: 0.5,
             transparent: true,
-            opacity: 0.85,
-            wireframe: false
+            opacity: 0.85
         });
         const coreOrb = new THREE.Mesh(sphereGeo, sphereMat);
         scene.add(coreOrb);
 
-        // --- Sci-Fi Ring System ---
         const rings = [];
         const ringColors = [0x00f0ff, 0xc5a059, 0x0088ff];
         for (let i = 0; i < 3; i++) {
@@ -182,14 +208,12 @@
             rings.push(ring);
         }
 
-        // Window resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // Animation Loop
         let clock = new THREE.Clock();
         let pulseIntensity = 0;
 
@@ -198,14 +222,12 @@
             const delta = clock.getDelta();
             const elapsedTime = clock.getElapsedTime();
 
-            // Rotasi orb & cincin yang halus
             coreOrb.rotation.y += delta * 0.2;
             rings.forEach((ring, index) => {
                 ring.rotation.x += delta * (0.2 + index * 0.1);
                 ring.rotation.y += delta * (0.3 - index * 0.05);
             });
 
-            // Efek denyut cahaya saat aktif/berbicara
             const scaleFactor = 1 + Math.sin(elapsedTime * 4) * 0.03 + (pulseIntensity * 0.15);
             coreOrb.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
@@ -213,20 +235,79 @@
         }
         animate();
 
-        // --- Gemini Neural Processing & Response ---
-        async function sendCommand() {
+        // --- SPEECH RECOGNITION (MIC) ---
+        let recognition;
+        let isListening = false;
+
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'id-ID';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.onstart = () => {
+                isListening = true;
+                document.getElementById('mic-btn').classList.add('active');
+                document.getElementById('status-display').innerText = "LISTENING";
+                document.getElementById('response-box').innerText = "Mendengarkan suara Anda...";
+            };
+
+            recognition.onresult = (event) => {
+                const speechText = event.results[0][0].transcript;
+                document.getElementById('user-command').value = speechText;
+                processQuery(speechText);
+            };
+
+            recognition.onerror = () => {
+                stopMic();
+                document.getElementById('response-box').innerText = "Gagal menangkap suara. Silakan ketik perintah.";
+            };
+
+            recognition.onend = () => {
+                stopMic();
+            };
+        }
+
+        function toggleMic() {
+            if (!recognition) {
+                alert("Browser Anda tidak mendukung fitur pengenalan suara.");
+                return;
+            }
+            if (isListening) {
+                recognition.stop();
+                stopMic();
+            } else {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+        }
+
+        function stopMic() {
+            isListening = false;
+            document.getElementById('mic-btn').classList.remove('active');
+            document.getElementById('status-display').innerText = "ONLINE";
+        }
+
+        // --- COMMAND & GEMINI API PROCESSING ---
+        function sendCommand() {
             const inputField = document.getElementById('user-command');
+            const text = inputField.value.trim();
+            if (!text) return;
+            inputField.value = '';
+            processQuery(text);
+        }
+
+        async function processQuery(query) {
             const statusDisplay = document.getElementById('status-display');
             const responseBox = document.getElementById('response-box');
-            
-            const text = inputField.value.trim();
-            if(!text) return;
 
-            inputField.value = '';
             statusDisplay.innerText = "PROCESSING";
             pulseIntensity = 1.0;
-            responseBox.style.display = 'block';
-            responseBox.innerText = "Menganalisis matriks data...";
+            responseBox.innerText = `Memproses: "${query}"...`;
 
             try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
@@ -235,7 +316,7 @@
                     body: JSON.stringify({
                         contents: [{ 
                             parts: [{ 
-                                text: "Anda adalah JARVIS OS V.2, kecerdasan buatan tingkat lanjut yang sangat cerdas, taktis, dan setia kepada Andria Technologies. Jawablah secara singkat, tegas, dan berwibawa. Pertanyaan: " + text 
+                                text: "Anda adalah JARVIS OS V.2, kecerdasan buatan tingkat lanjut yang sangat cerdas, taktis, dan setia kepada Andria Technologies. Jawablah secara singkat, tegas, dan berwibawa. Pertanyaan: " + query 
                             }] 
                         }]
                     })
@@ -259,22 +340,18 @@
             }
         }
 
-        // --- Text-to-Speech (Suara Jarvis Otomatis) ---
+        // --- TEXT-TO-SPEECH (SUARA JARVIS) ---
         function speakResponse(text) {
             if (!('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
 
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'id-ID';
-            utterance.pitch = 1.05;
-            utterance.rate = 1.0;
-
-            const voices = window.speechSynthesis.getVoices();
-            const targetVoice = voices.find(v => v.lang.includes('id') || v.lang.includes('en')) || voices[0];
-            if (targetVoice) utterance.voice = targetVoice;
+            utterance.pitch = 1.0;
+            utterance.rate = 1.05;
 
             utterance.onstart = () => {
-                pulseIntensity = 1.5; // Orb berdenyut cepat saat berbicara
+                pulseIntensity = 1.5;
                 document.getElementById('status-display').innerText = "SPEAKING";
             };
             utterance.onend = () => {
